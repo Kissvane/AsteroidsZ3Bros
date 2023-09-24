@@ -9,6 +9,10 @@ public class Asteroid : MonoBehaviour
 {
     public Action<Asteroid, Vector3> AsteroidDestroyed;
     [SerializeField] private AsteroidSize size;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private List<AudioClip> audioClips;
+    [SerializeField] private Collider2D myCollider;
+    [SerializeField] private SpriteRenderer myRenderer;
     public AsteroidSize Size => size;
 
     public void OnCollisionEnter2D(Collision2D collision)
@@ -19,6 +23,16 @@ public class Asteroid : MonoBehaviour
     private void Explode()
     {
         AsteroidDestroyed?.Invoke(this, transform.position);
+        StartCoroutine(PlaySoundAndDestroy());
+    }
+
+    IEnumerator PlaySoundAndDestroy()
+    {
+        myCollider.isTrigger = true;
+        myRenderer.enabled = false;
+        AudioClip randomClip = audioClips[UnityEngine.Random.Range(0, audioClips.Count)];
+        audioSource.PlayOneShot(randomClip);
+        yield return new WaitForSeconds(randomClip.length);
         Destroy(gameObject);
     }
 }

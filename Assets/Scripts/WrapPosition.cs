@@ -1,15 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEngine;
 
 public class WrapPosition : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private SpriteRenderer myRenderer;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private Collider2D myCollider;
     [SerializeField] private Transform myTransform;
+    [SerializeField] private Rigidbody2D myRigidbody;
     private bool isWrappingX;
     private bool isWrappingY;
+
+    public void SetGameManager(GameManager gameManager)
+    {
+        this.gameManager = gameManager;
+    }
 
     private void Awake()
     {
@@ -29,7 +37,7 @@ public class WrapPosition : MonoBehaviour
         Vector3 btmLeft = myTransform.TransformPoint(new Vector3(left, btm, 0f));
         Vector3 btmRight = myTransform.TransformPoint(new Vector3(right, btm, 0f));
 
-        return !IsOutsideScreen(topLeft) || !IsOutsideScreen(topRight) 
+        return !IsOutsideScreen(topLeft) || !IsOutsideScreen(topRight)
             || !IsOutsideScreen(btmLeft) || !IsOutsideScreen(btmRight);
     }
 
@@ -57,17 +65,16 @@ public class WrapPosition : MonoBehaviour
             return;
         }
         var viewportPosition = mainCamera.WorldToViewportPoint(myTransform.position);
-        var newPosition = myTransform.position;
-        if (!isWrappingX && (viewportPosition.x > 1 || viewportPosition.x < 0))
+        Vector2 newPosition = myTransform.position;
+
+        Vector2 pos = Vector2.zero;
+        if (GeometryUtils.SegmentRectangleIntersection(newPosition, newPosition - (myRigidbody.velocity * 1000), gameManager.Corners, out pos))
         {
-            newPosition.x = -newPosition.x;
-            isWrappingX = true;
+            myTransform.position = pos - (Vector2)(myTransform.right * myCollider.bounds.size.x);
         }
-        if (!isWrappingY && (viewportPosition.y > 1 || viewportPosition.y < 0))
+        else
         {
-            newPosition.y = -newPosition.y;
-            isWrappingY = true;
+            Debug.LogError("Unmanaged wrap case");
         }
-        myTransform.position = newPosition;
     }
 }

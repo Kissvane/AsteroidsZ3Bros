@@ -157,7 +157,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fb8e3ab424ef7754786df55c1a632db8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameManager: {fileID: 0}
   myRenderer: {fileID: 1811011673394489030}
   mainCamera: {fileID: 0}
   myCollider: {fileID: 8186322706437804595}
   myTransform: {fileID: 2845180937913850867}
+  myRigidbody: {fileID: 915253953339254890}

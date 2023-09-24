@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AsteroidsSpawner : MonoBehaviour
 {
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private ScoreManager scoreManager;
     [SerializeField] private List<GameObject> asteroidsPrefabs;
     [SerializeField] private Camera mainCamera;
@@ -49,6 +50,8 @@ public class AsteroidsSpawner : MonoBehaviour
         asteroid.AsteroidDestroyed += CreateAsteroidsChunks;
         asteroids.Add(asteroid);
         scoreManager.RegisterAsteroid(asteroid);
+
+        asteroidObject.GetComponent<WrapPosition>().SetGameManager(gameManager);
     }
 
     private void CreateAsteroidsChunks(Asteroid asteroid, Vector3 position)

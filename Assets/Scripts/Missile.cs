@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class Missile : MonoBehaviour
 {
+    [SerializeField] private float MissileLifetime = 3f;
     private void Awake()
     {
-        Destroy(gameObject,5f);
+        Destroy(gameObject,MissileLifetime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

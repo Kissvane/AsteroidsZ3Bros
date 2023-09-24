@@ -14,6 +14,8 @@ public class PlayerLife : MonoBehaviour
     [SerializeField] private float invincibilityTime = 3f;
     [SerializeField] private float flickerPeriod = 0.25f;
     [SerializeField] private TMP_Text lifeLabel;
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private List<AudioClip> audioClips;
     public Action<int> PlayerIsDead;
 
     private bool isInvincible = false;
@@ -48,12 +50,13 @@ public class PlayerLife : MonoBehaviour
         myRigidbody.velocity = Vector3.zero;
         myRigidbody.angularVelocity = 0f;
         life--;
-        if(life < 0)
+        if (life < 0)
         {
             PlayerIsDead?.Invoke(life);
             gameObject.SetActive(false);
             return;
         }
+        audioSource.PlayOneShot(audioClips[UnityEngine.Random.Range(0, audioClips.Count)]);
         lifeLabel.text = $"Life : {life}";
         transform.position = Vector3.zero;
 
@@ -62,6 +65,7 @@ public class PlayerLife : MonoBehaviour
 
     private IEnumerator Spawn()
     {
+        isInvincible = true;
         myCollider.isTrigger = true;
         StartCoroutine(DeathTwinkle());
 
@@ -69,6 +73,7 @@ public class PlayerLife : MonoBehaviour
 
         spriteRenderer.color = normalColor;
         myCollider.isTrigger = false;
+        isInvincible = false;
     }
 
     private IEnumerator DeathTwinkle()
